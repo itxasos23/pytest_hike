@@ -28,21 +28,23 @@ A short hike around Python testing and Pytest
 $ whoami
 - Itxaso Aizpurua 
 - 6 years Python experience 
-- 2 years girl experience (Trans rights! 🏳️‍⚧️  🦈)
+- 2 years girl experience (Trans rights! )
 - Backend Eng @ Livewell (Zurich)
 - Full time nerd
 - Pytest contributor (2 whole commits!!!)
 ```
+
+:snake: :transgender_flag: :shark:
 
 ---
 
 # Summary 
 
 A short hike up pytest hill, featuring:
-- Python testing basics (unittest) (10 min)
-- How pytest makes our lives easier (10 min)
-- Nice pytest features (plugins, fixtures) (10 min)
-- Share Tips & Tricks (10 min)
+- Python testing basics (10 min)
+- Enter Pytest (10 min)
+- The real power of Pytest (10 min)
+- Open Discussion (10 min)
 
 ---
 
@@ -52,8 +54,28 @@ A short hike up pytest hill, featuring:
 - Python unit testing: Unittest
 
 ---
+# General concepts
 
-# Example 01 - Add
+- Software is declarative: 
+  - You must write everything you want to happen
+
+- Abstraction is a double-edged sword:
+  - Too much abstraction can get you lost
+  - Too little abstraction is hard to understand
+
+---
+
+# General concepts cont'd
+
+- Software engineering is 50% art 50% science
+- Writing unit tests is 90% art 10% science
+- There are many ways to get stuff done
+- Interpreted languages benefit more from unit tests than compiled languages
+
+---
+
+# Let's Dive in!
+### Example 01 - Add
  
 ---
 
@@ -110,10 +132,6 @@ def get_random_cat_fact():
 
 ---
 
-# See it in action!
-
----
-
 ```python
 # test.py
 from unittest import TestCase
@@ -126,6 +144,10 @@ class TestCase02(TestCase):
 
         self.assertTrue(len(return_value) > 0)  
 ```
+
+---
+
+# See it in action!
 
 ---
 
@@ -190,7 +212,7 @@ class TestCase02Mocked(TestCase):
         self.mock_requests_patch = mock.patch("main.requests")
         self.mock_requests_object = self.mock_requests_patch.start() # mock starts
 
-    def test_add_numbers(self):
+    def test_get_random_cat_fact(self):
         # We set requests.get().json()'s return value
         self.mock_requests_object.get.return_value.json.return_value = {"fact": "Cats are amazing!"}
 
@@ -202,6 +224,9 @@ class TestCase02Mocked(TestCase):
         self.mock_requests_patch.stop() # mock stops
 
 ```
+---
+
+# See it in action!
 
 ---
 
@@ -240,7 +265,7 @@ $ python -m unittest test_mock.py
 ### Context managers
 - start/stop on `__enter__/__exit__`:
 ```python
-    def test_add_numbers(self):
+    def test_get_random_cat_fact(self):
         with mock.patch("main.requests") as mock_requests:
             mock_requests.get.return_value.json.return_value = {"fact": "Cats are amazing!"}
             return_value = get_random_cat_fact()
@@ -297,8 +322,8 @@ Theres more, but let's jump onto Pytest!
 - Unittest has its limits
 - Pytest highlights from the docs:
   - Detailed info on **assert statements**
-  - **Auto-discovery** of test modules and functions
   - Modular **fixtures**
+  - **Auto-discovery** of test modules and functions
   - Rich **plugin** architecture and ecosystem
 
 
@@ -306,7 +331,6 @@ Theres more, but let's jump onto Pytest!
 
 # Fixtures
 ### Nice Asserts
-
 
 ---
 
@@ -367,7 +391,7 @@ E         Use -v to get more diff
 ---
 
 # Pytest
-## Fixtures
+### Fixtures
 
 ---
 
@@ -387,7 +411,7 @@ class TestCase02Mocked(TestCase):
         self.mock_requests_patch = mock.patch("main.requests")
         self.mock_requests_object = self.mock_requests_patch.start() # mock starts
 
-    def test_add_numbers(self):
+    def test_get_random_cat_fact(self):
         # We set requests.get().json()'s return value
         self.mock_requests_object.get.return_value.json.return_value = {"fact": "Cats are amazing!"}
 
@@ -398,7 +422,6 @@ class TestCase02Mocked(TestCase):
     def tearDown(self):
         self.mock_requests_patch.stop() # mock stops
 ```
-
 
 ---
 
@@ -416,7 +439,7 @@ def mock_requests():
     with mock.patch("main.requests") as mock_object:
         yield mock_object
 
-def test_add_numbers(mock_requests):
+def test_get_random_cat_fact(mock_requests):
     mock_requests.get.return_value.json.return_value = {"fact": "Cats are amazing!"}
     return_value = get_random_cat_fact()
     assert return_value == "Cats are amazing!"
@@ -434,7 +457,7 @@ Or this!
 from main import get_random_cat_fact
 # look ma! No import!
 
-def test_add_numbers(mock_requests):
+def test_get_random_cat_fact(mock_requests):
     mock_requests.get.return_value.json.return_value = {"fact": "Cats are amazing!"}
     return_value = get_random_cat_fact()
     assert return_value == "Cats are amazing!"
@@ -454,15 +477,16 @@ def mock_requests():
 ---
 
 # Fixtures (Pytest)
+### Lightining round!
 
 More on fixtures:
-- builtin fixtures to capture logs, stdout, etc.
-- fixture dependencies
-- autouse fixtures
-- fixture scopes
-- parametrize fixtures
+- Functional (vs. setup-teardown based fixtures from unittest).
+- Builtin fixtures to capture logs, stdout, etc.
+- Fixture can depend on other fixtures
+- Autouse fixtures, use them for all tests without explicit import
+- Fixture scopes: test, module, session, etc.
 
-
+Read the [docs](https://docs.pytest.org/en/6.2.x/fixture.html)!
 
 ---
 
@@ -470,7 +494,7 @@ More on fixtures:
 
 Performance:
 - **pytest-profile**
-- pytest-durations
+- **pytest-durations**
 - pytest-perf
 - pytest-timeout: Set timeout on tests
 
@@ -501,6 +525,20 @@ Profile your tests:
 - A bit too verbose at times
 
 `pytest tests.py --profile`
+
+---
+# Plugin highlights
+### pytest-durations
+
+Get durations for each of your tests stages:
+- setup
+- test
+- teardown
+- fixtures
+
+Useful to find where you're exactly spending your time.
+No argument, just `pip install pytest-durations`
+
 
 ---
 # Plugin Highlights
@@ -540,11 +578,12 @@ Splits tests across multiple CPUs to speed up execution.
 # Misc.
 
 Other nice things to keep in mind:
-- parametrize
-- monkeypatch
-- logassert
-- mocking and imports
-- exitstack
+- Parametrize
+- Monkeypatch
+- Logassert
+- Mocking and imports
+- Mocking and functions
+- Exitstack
 
 ---
 
@@ -634,13 +673,39 @@ This is the cause for the biggest headaches I've had so far.
 
 ---
 
-# ExitStacks
+# Misc - Mocking and Functions 
+
+Sometimes we want to assert a mock was called:
+- `assert_called`, `assert_called_with`, etc.
+
+
+```python
+@pytest.fixture
+def mock_requests():
+    with mock.patch("main.requests") as mock_requests:
+        yield mock_requests
+
+
+def test_get_random_cat_fact(mock_requests):
+    mock_requests.get.return_value.json.return_value = {"fact": "Cats are amazing!"}
+    return_value = get_random_cat_fact()
+    assert return_value == "Cats are amazing!"
+
+    # We assert that the mock was called with what we expect.
+    mock_requests.get.assert_called_with("https://catfact.ninja/fact")
+    mock_requests.get.return_value.json.assert_called_with()
+
+```
+
+---
+
+# Misc - ExitStacks
 
 `contextlib.ExitStack` lets you enter many context managers at the same time.
 
 ```python
 @pytest.fixture
-def mock_functions():
+def mock_models():
     with mock.patch("model_1") as model_1:
         with mock.patch("model_2") as model_2:
             with mock.patch("model_3") as model_3:
@@ -649,7 +714,7 @@ def mock_functions():
 
 ```python
 @pytest.fixture
-def mock_functions():
+def mock_models():
     with ExitStack() as stack:
         yield [
             stack.enter_context(mock.patch("model_1")),
@@ -657,6 +722,16 @@ def mock_functions():
             stack.enter_context(mock.patch("model_3")),
         ]
 ```
+
+---
+
+# Bringing it all together
+
+- Python benefits a lot from unit testing
+- Pytest brings Quality of Life features to the tables
+- Mocks are hard!
+- Fixtures are functional (vs. setup/teardown)
+- If you're stuck, chances are someone has already hit that wall, search for existing plugins and fixtures
 
 ---
 

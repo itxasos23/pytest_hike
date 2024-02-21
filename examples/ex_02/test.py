@@ -1,5 +1,6 @@
 from unittest import TestCase
 from main import get_random_cat_fact
+from icecream import ic
 
 class TestCase02(TestCase):  
 
